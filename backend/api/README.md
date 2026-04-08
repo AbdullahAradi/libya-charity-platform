@@ -46,7 +46,7 @@ prisma/
 4. Run migrations:
    - `npm run prisma:migrate`
 5. Seed sample data:
-   - `npm run prisma:seed`
+   - `npm run seed`
 6. Start dev server:
    - `npm run dev`
 

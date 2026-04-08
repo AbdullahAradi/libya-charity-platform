@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/constants/app_constants.dart';
+
 class SubmitCaseScreen extends StatefulWidget {
   const SubmitCaseScreen({super.key});
 
@@ -21,6 +23,12 @@ class _SubmitCaseScreenState extends State<SubmitCaseScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(color: AppConstants.brandGreenSoft, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppConstants.border)),
+              child: const Text('هذا القسم مخصص للأسر أو من ينوب عنها. بعد الإرسال، يخضع الطلب للمراجعة والتحقق من هيئة الزكاة الليبية قبل النشر.'),
+            ),
+            const SizedBox(height: 12),
             const TextField(decoration: InputDecoration(labelText: 'اسم مقدم الطلب')),
             const SizedBox(height: 8),
             const TextField(decoration: InputDecoration(labelText: 'اسم الممثل (إن وجد)')),
@@ -34,13 +42,13 @@ class _SubmitCaseScreenState extends State<SubmitCaseScreen> {
             const TextField(decoration: InputDecoration(labelText: 'المبلغ المطلوب')),
             const SizedBox(height: 8),
             const TextField(maxLines: 4, decoration: InputDecoration(labelText: 'ملخص الحالة')),
-            const SizedBox(height: 8),
-            OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.upload_file), label: const Text('رفع المستندات (TODO: ربط رفع الملفات)')),
+            const SizedBox(height: 10),
+            OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.upload_file), label: const Text('رفع المستندات الداعمة (TODO: ربط رفع الملفات)')),
             CheckboxListTile(
               value: consent,
               onChanged: (v) => setState(() => consent = v ?? false),
               title: const Text('أوافق على سياسة الخصوصية وصحة المعلومات المقدمة.'),
-              subtitle: const Text('سيتم التحقق من الحالة عبر هيئة الزكاة الليبية قبل النشر.'),
+              subtitle: const Text('سيتم مراجعة الطلب قبل اعتماده.'),
             ),
             FilledButton(
               onPressed: consent ? () => context.push('/submit-case-success') : null,

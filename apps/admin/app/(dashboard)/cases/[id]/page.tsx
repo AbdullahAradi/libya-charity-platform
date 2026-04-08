@@ -1,8 +1,7 @@
 import { notFound } from 'next/navigation';
 
 import { DetailSectionCard } from '@/components/cards/detail-section-card';
-import { ActionToolbar } from '@/components/shared/action-toolbar';
-import { ConfirmationDialog } from '@/components/shared/confirmation-dialog';
+import { CaseActionToolbar } from '@/components/cases/case-action-toolbar';
 import { PageHeader } from '@/components/shared/page-header';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { apiClient } from '@/lib/api/client';
@@ -27,16 +26,12 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
     <div className="space-y-4">
       <PageHeader title={item.title} description="Case detail and operational controls" />
 
-      <ActionToolbar>
-        <ConfirmationDialog label="Approve" onConfirm={() => console.log('approve')} />
-        <ConfirmationDialog label="Reject" onConfirm={() => console.log('reject')} />
-        <ConfirmationDialog label="Request More Info" onConfirm={() => console.log('request-info')} />
-        <ConfirmationDialog label="Publish" onConfirm={() => console.log('publish')} />
-        <ConfirmationDialog label="Unpublish" onConfirm={() => console.log('unpublish')} />
-        <ConfirmationDialog label="Archive" onConfirm={() => console.log('archive')} />
-        <button className="rounded-md border border-slate-300 px-3 py-2 text-sm">Add Update</button>
-        <button className="rounded-md border border-slate-300 px-3 py-2 text-sm">Add Report</button>
-      </ActionToolbar>
+      <CaseActionToolbar
+        caseId={item.id}
+        title={item.title}
+        currentStatus={item.publicationStatus}
+        availableActions={['approve', 'reject', 'request-info', 'publish', 'unpublish', 'archive']}
+      />
 
       <div className="grid gap-4 lg:grid-cols-2">
         <DetailSectionCard title="Case Summary">

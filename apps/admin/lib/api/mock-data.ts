@@ -15,6 +15,8 @@ const summary: DashboardSummary = {
   pendingReviews: 37,
   liveCampaigns: 9,
   supportRequests: 24,
+  platformZakatTotal: 1324000,
+  platformNonZakatTotal: 1519000,
 };
 
 const cases: CaseItem[] = [
@@ -28,6 +30,9 @@ const cases: CaseItem[] = [
     caseType: 'Medical',
     targetAmount: 42000,
     raisedAmount: 31000,
+    zakatRaisedAmount: 22000,
+    nonZakatRaisedAmount: 9000,
+    zakatEligible: true,
     verificationStatus: 'PENDING',
     publicationStatus: 'UNPUBLISHED',
     fundingStatus: 'UNDER_FUNDED',
@@ -35,6 +40,22 @@ const cases: CaseItem[] = [
     updatedAt: '2026-04-06',
     reviewer: 'Zakat Reviewer Team',
     notes: 'Awaiting supporting medical documents.',
+    alerts: [
+      {
+        id: 'alert-1',
+        title: 'Urgent support needed for pediatric surgery',
+        message: 'This medical case is close to operation deadline. Contributions can unlock treatment immediately.',
+        channel: 'PUSH',
+        audienceType: 'PAST_DONORS',
+        status: 'SENT',
+        estimatedRecipientCount: 1200,
+        actualRecipientCount: 1134,
+        sentAt: '2026-04-05T10:30:00Z',
+        createdAt: '2026-04-05T09:45:00Z',
+        reason: 'Weekly awareness cycle',
+        isEmergencyOverride: false,
+      },
+    ],
   },
   {
     id: 'case-2',
@@ -46,6 +67,9 @@ const cases: CaseItem[] = [
     caseType: 'Housing',
     targetAmount: 28000,
     raisedAmount: 23000,
+    zakatRaisedAmount: 8000,
+    nonZakatRaisedAmount: 15000,
+    zakatEligible: false,
     verificationStatus: 'APPROVED',
     publicationStatus: 'PUBLISHED',
     fundingStatus: 'UNDER_FUNDED',
@@ -53,6 +77,7 @@ const cases: CaseItem[] = [
     updatedAt: '2026-04-01',
     reviewer: 'Finance Reviewer Team',
     notes: 'Can be published immediately.',
+    alerts: [],
   },
 ];
 
@@ -63,8 +88,38 @@ const organizations: Organization[] = [
 ];
 
 const donations: Donation[] = [
-  { id: 'don-1', donor: 'Ahmed Salem', amount: 200, currency: 'LYD', type: 'ONE_TIME', linkedTo: 'case-2', paymentMethod: 'Card', paymentStatus: 'PAID', receiptNumber: 'LC-2026-00120', createdAt: '2026-04-04' },
-  { id: 'don-2', donor: 'Mariam Ali', amount: 120, currency: 'LYD', type: 'RECURRING', linkedTo: 'Campaign Ramadan', paymentMethod: 'LY Pay', paymentStatus: 'PENDING', receiptNumber: 'LC-2026-00121', createdAt: '2026-04-05' },
+  {
+    id: 'don-1',
+    donor: 'Ahmed Salem',
+    amount: 200,
+    currency: 'LYD',
+    type: 'ONE_TIME',
+    donationType: 'ZAKAT',
+    countsAsZakat: true,
+    linkedTo: 'case-2',
+    linkedToZakatTotal: 8000,
+    linkedToNonZakatTotal: 15000,
+    paymentMethod: 'Card',
+    paymentStatus: 'PAID',
+    receiptNumber: 'LC-2026-00120',
+    createdAt: '2026-04-04',
+  },
+  {
+    id: 'don-2',
+    donor: 'Mariam Ali',
+    amount: 120,
+    currency: 'LYD',
+    type: 'RECURRING',
+    donationType: 'SADAQAH',
+    countsAsZakat: false,
+    linkedTo: 'Campaign Ramadan',
+    linkedToZakatTotal: 250000,
+    linkedToNonZakatTotal: 640000,
+    paymentMethod: 'LY Pay',
+    paymentStatus: 'PENDING',
+    receiptNumber: 'LC-2026-00121',
+    createdAt: '2026-04-05',
+  },
 ];
 
 const reports: Report[] = [
@@ -80,6 +135,7 @@ const support: SupportRequest[] = [
 const audit: AuditLog[] = [
   { id: 'aud-1', actor: 'Admin User', action: 'CASE_APPROVED', entityType: 'Case', entityId: 'case-2', timestamp: '2026-04-04T09:00:00Z' },
   { id: 'aud-2', actor: 'Support Agent', action: 'SUPPORT_STATUS_UPDATED', entityType: 'SupportRequest', entityId: 'sup-1', timestamp: '2026-04-06T12:40:00Z' },
+  { id: 'aud-3', actor: 'Admin User', action: 'CASE_ALERT_SENT', entityType: 'CaseAlert', entityId: 'alert-1', timestamp: '2026-04-05T10:31:00Z' },
 ];
 
 const users: User[] = [

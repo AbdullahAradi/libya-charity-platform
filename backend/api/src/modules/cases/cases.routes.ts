@@ -3,7 +3,14 @@ import { Router } from 'express';
 import { requireAuth, requireRoles } from '../../middleware/auth';
 import { validate } from '../../middleware/validate';
 import * as controller from './cases.controller';
-import { addCaseUpdateSchema, publishCaseSchema, reviewCaseSchema, submitCaseSchema } from './cases.schema';
+import {
+  addCaseUpdateSchema,
+  createCaseAlertSchema,
+  publishCaseSchema,
+  reviewCaseSchema,
+  sendCaseAlertSchema,
+  submitCaseSchema,
+} from './cases.schema';
 
 export const casesRouter = Router();
 
@@ -22,3 +29,7 @@ casesRouter.post('/:id/review/request-info', requireAuth, requireRoles(...contro
 
 casesRouter.patch('/:id/admin/status', requireAuth, requireRoles(...controller.adminRoles), validate(publishCaseSchema), controller.publishCase);
 casesRouter.post('/:id/updates', requireAuth, requireRoles(...controller.ngoRoles, ...controller.adminRoles), validate(addCaseUpdateSchema), controller.addCaseUpdate);
+
+casesRouter.get('/:id/alerts', requireAuth, requireRoles(...controller.adminRoles, ...controller.ngoRoles), controller.listCaseAlerts);
+casesRouter.post('/:id/alerts', requireAuth, requireRoles(...controller.adminRoles, ...controller.ngoRoles), validate(createCaseAlertSchema), controller.createCaseAlertDraft);
+casesRouter.post('/:id/alerts/:alertId/send', requireAuth, requireRoles(...controller.adminRoles, ...controller.ngoRoles), validate(sendCaseAlertSchema), controller.sendCaseAlert);

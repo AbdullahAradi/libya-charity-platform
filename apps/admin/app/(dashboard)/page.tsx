@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Activity, FileClock, HandCoins, HeartPulse, LifeBuoy } from 'lucide-react';
+import { Activity, FileClock, HandCoins, HeartPulse, LifeBuoy, Scale } from 'lucide-react';
 
 import { MetricCard } from '@/components/cards/metric-card';
 import { PageHeader } from '@/components/shared/page-header';
@@ -19,12 +19,14 @@ export default async function DashboardHomePage() {
     <div>
       <PageHeader title="Dashboard Overview" description="Operational snapshot for Libya Charity." />
 
-      <div className="grid gap-4 md:grid-cols-5">
+      <div className="grid gap-4 md:grid-cols-7">
         <MetricCard title="Total Donations" value={`${summary.totalDonations.toLocaleString()} LYD`} icon={HandCoins} />
         <MetricCard title="Active Cases" value={String(summary.activeCases)} icon={HeartPulse} />
         <MetricCard title="Pending Reviews" value={String(summary.pendingReviews)} icon={FileClock} />
         <MetricCard title="Live Campaigns" value={String(summary.liveCampaigns)} icon={Activity} />
         <MetricCard title="Support Requests" value={String(summary.supportRequests)} icon={LifeBuoy} />
+        <MetricCard title="Zakat Total" value={`${summary.platformZakatTotal.toLocaleString()} LYD`} icon={Scale} />
+        <MetricCard title="Non-Zakat Total" value={`${summary.platformNonZakatTotal.toLocaleString()} LYD`} icon={Scale} />
       </div>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-3">

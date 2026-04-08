@@ -32,3 +32,28 @@ export const addCaseUpdateSchema = z.object({
     body: z.string().min(5),
   }),
 });
+
+export const createCaseAlertSchema = z.object({
+  body: z.object({
+    title: z.string().min(3),
+    message: z.string().min(10),
+    channel: z.enum(['PUSH', 'EMAIL']),
+    audienceType: z.enum([
+      'ALL_OPTED_IN_DONORS',
+      'PAST_DONORS',
+      'DONORS_BY_INTEREST_CATEGORY',
+      'DONORS_FOLLOWED_SIMILAR_CASES',
+      'DONORS_CONTRIBUTED_SIMILAR_CASE_TYPES',
+    ]),
+    scheduledAt: z.string().datetime().optional(),
+    estimatedRecipientCount: z.number().int().positive().optional(),
+    reason: z.string().optional(),
+    isEmergencyOverride: z.boolean().default(false),
+  }),
+});
+
+export const sendCaseAlertSchema = z.object({
+  body: z.object({
+    reason: z.string().optional(),
+  }),
+});

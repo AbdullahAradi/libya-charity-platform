@@ -1,6 +1,7 @@
 import { endpoints } from './endpoints';
 import {
   AuditLog,
+  CaseAlert,
   CaseItem,
   DashboardSummary,
   Donation,
@@ -17,6 +18,8 @@ export const apiClient = {
   getCases: async (): Promise<CaseItem[]> => mockData.cases,
   getCaseById: async (id: string): Promise<CaseItem | undefined> =>
     mockData.cases.find((item) => item.id === id),
+  getCaseAlerts: async (caseId: string): Promise<CaseAlert[]> =>
+    mockData.cases.find((item) => item.id === caseId)?.alerts ?? [],
   getOrganizations: async (): Promise<Organization[]> => mockData.organizations,
   getDonations: async (): Promise<Donation[]> => mockData.donations,
   getReports: async (): Promise<Report[]> => mockData.reports,

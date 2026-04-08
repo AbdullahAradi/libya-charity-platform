@@ -4,6 +4,32 @@ export type DashboardSummary = {
   pendingReviews: number;
   liveCampaigns: number;
   supportRequests: number;
+  platformZakatTotal: number;
+  platformNonZakatTotal: number;
+};
+
+export type CaseAlertAudience =
+  | 'ALL_OPTED_IN_DONORS'
+  | 'PAST_DONORS'
+  | 'DONORS_BY_INTEREST_CATEGORY'
+  | 'DONORS_FOLLOWED_SIMILAR_CASES'
+  | 'DONORS_CONTRIBUTED_SIMILAR_CASE_TYPES';
+
+export type CaseAlertChannel = 'PUSH' | 'EMAIL';
+
+export type CaseAlert = {
+  id: string;
+  title: string;
+  message: string;
+  channel: CaseAlertChannel;
+  audienceType: CaseAlertAudience;
+  status: 'DRAFT' | 'SCHEDULED' | 'SENT' | 'CANCELLED';
+  estimatedRecipientCount?: number;
+  actualRecipientCount?: number;
+  sentAt?: string;
+  createdAt: string;
+  reason?: string;
+  isEmergencyOverride: boolean;
 };
 
 export type CaseItem = {
@@ -16,6 +42,9 @@ export type CaseItem = {
   caseType: string;
   targetAmount: number;
   raisedAmount: number;
+  zakatRaisedAmount: number;
+  nonZakatRaisedAmount: number;
+  zakatEligible: boolean;
   verificationStatus: 'PENDING' | 'APPROVED' | 'REJECTED';
   publicationStatus: 'PUBLISHED' | 'UNPUBLISHED' | 'ARCHIVED';
   fundingStatus: 'UNDER_FUNDED' | 'FUNDED';
@@ -23,6 +52,7 @@ export type CaseItem = {
   updatedAt: string;
   reviewer: string;
   notes: string;
+  alerts: CaseAlert[];
 };
 
 export type Organization = {
@@ -41,7 +71,11 @@ export type Donation = {
   amount: number;
   currency: string;
   type: 'ONE_TIME' | 'RECURRING';
+  donationType: 'ZAKAT' | 'SADAQAH' | 'GENERAL' | 'SPONSORSHIP' | 'CAMPAIGN';
+  countsAsZakat: boolean;
   linkedTo: string;
+  linkedToZakatTotal?: number;
+  linkedToNonZakatTotal?: number;
   paymentMethod: string;
   paymentStatus: 'PENDING' | 'PAID' | 'FAILED' | 'CANCELLED';
   receiptNumber: string;

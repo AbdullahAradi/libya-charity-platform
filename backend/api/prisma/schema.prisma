@@ -1,0 +1,260 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  DONOR
+  FAMILY_APPLICANT
+  NGO_USER
+  NGO_MANAGER
+  ZAKAT_REVIEWER
+  FINANCE_REVIEWER
+  SUPPORT_AGENT
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum OrganizationStatus {
+  PENDING
+  VERIFIED
+  SUSPENDED
+}
+
+enum CaseStatus {
+  DRAFT
+  PENDING_REVIEW
+  NEEDS_MORE_INFO
+  APPROVED
+  REJECTED
+  PUBLISHED
+  UNPUBLISHED
+  ARCHIVED
+}
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  INACTIVE
+}
+
+enum DonationStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
+}
+
+enum ReportStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum SupportStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+model User {
+  id            String       @id @default(cuid())
+  email         String       @unique
+  phone         String?      @unique
+  passwordHash  String
+  fullName      String
+  city          String?
+  role          UserRole     @default(DONOR)
+  status        UserStatus   @default(ACTIVE)
+  organizationId String?
+  organization  Organization? @relation(fields: [organizationId], references: [id])
+  createdCases  Case[]       @relation("CaseCreatedBy")
+  reviewedCases Case[]       @relation("CaseReviewedBy")
+  donations     Donation[]
+  recurringDonations RecurringDonation[]
+  supportRequests SupportRequest[]
+  auditLogs     AuditLog[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model Organization {
+  id             String             @id @default(cuid())
+  nameAr         String
+  nameEn         String?
+  city           String
+  description    String?
+  status         OrganizationStatus @default(PENDING)
+  verifiedAt     DateTime?
+  suspendedAt    DateTime?
+  users          User[]
+  cases          Case[]
+  campaigns      Campaign[]
+  sponsorships   SponsorshipProgram[]
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+}
+
+model Case {
+  id               String      @id @default(cuid())
+  titleAr          String
+  titleEn          String?
+  summaryAr        String
+  summaryEn        String?
+  city             String
+  area             String?
+  caseType         String
+  zakatEligible    Boolean     @default(false)
+  isUrgent         Boolean     @default(false)
+  targetAmount     Decimal     @db.Decimal(12, 2)
+  raisedAmount     Decimal     @default(0) @db.Decimal(12, 2)
+  status           CaseStatus  @default(PENDING_REVIEW)
+  submittedByType  String
+  organizationId   String?
+  organization     Organization? @relation(fields: [organizationId], references: [id])
+  createdById      String
+  createdBy        User        @relation("CaseCreatedBy", fields: [createdById], references: [id])
+  reviewedById     String?
+  reviewedBy       User?       @relation("CaseReviewedBy", fields: [reviewedById], references: [id])
+  reviewNotes      String?
+  publishedAt      DateTime?
+  documents        CaseDocument[]
+  updates          CaseUpdate[]
+  reports          CaseReport[]
+  donations        Donation[]
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+model CaseDocument {
+  id          String   @id @default(cuid())
+  caseId      String
+  case        Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  title       String
+  fileUrl     String
+  createdAt   DateTime @default(now())
+}
+
+model CaseUpdate {
+  id          String   @id @default(cuid())
+  caseId      String
+  case        Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  title       String
+  body        String
+  createdById String
+  createdAt   DateTime @default(now())
+}
+
+model CaseReport {
+  id          String      @id @default(cuid())
+  caseId      String?
+  case        Case?       @relation(fields: [caseId], references: [id], onDelete: SetNull)
+  campaignId  String?
+  campaign    Campaign?   @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  title       String
+  summary     String
+  status      ReportStatus @default(DRAFT)
+  publishedAt DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Campaign {
+  id             String         @id @default(cuid())
+  titleAr        String
+  titleEn        String?
+  summaryAr      String
+  campaignType   String
+  targetAmount   Decimal        @db.Decimal(12, 2)
+  raisedAmount   Decimal        @default(0) @db.Decimal(12, 2)
+  status         CampaignStatus @default(DRAFT)
+  organizationId String?
+  organization   Organization?  @relation(fields: [organizationId], references: [id])
+  reports        CaseReport[]
+  donations      Donation[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model SponsorshipProgram {
+  id             String        @id @default(cuid())
+  titleAr        String
+  titleEn        String?
+  descriptionAr  String
+  monthlyAmount  Decimal       @db.Decimal(10, 2)
+  isActive       Boolean       @default(true)
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+model Donation {
+  id                  String         @id @default(cuid())
+  userId               String
+  user                 User           @relation(fields: [userId], references: [id])
+  caseId               String?
+  case                 Case?          @relation(fields: [caseId], references: [id])
+  campaignId           String?
+  campaign             Campaign?      @relation(fields: [campaignId], references: [id])
+  amount               Decimal        @db.Decimal(12, 2)
+  paymentMethod        String
+  status               DonationStatus @default(PENDING)
+  isAnonymous          Boolean        @default(false)
+  dedicatedTo          String?
+  receipt              Receipt?
+  createdAt            DateTime       @default(now())
+}
+
+model RecurringDonation {
+  id                  String         @id @default(cuid())
+  userId              String
+  user                User           @relation(fields: [userId], references: [id])
+  amount              Decimal        @db.Decimal(12, 2)
+  frequency           String
+  paymentMethod       String
+  status              DonationStatus @default(PENDING)
+  nextChargeAt        DateTime?
+  createdAt           DateTime       @default(now())
+}
+
+model Receipt {
+  id          String   @id @default(cuid())
+  donationId  String   @unique
+  donation    Donation @relation(fields: [donationId], references: [id], onDelete: Cascade)
+  reference   String   @unique
+  issuedAt    DateTime @default(now())
+}
+
+model SupportRequest {
+  id          String        @id @default(cuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id])
+  subject     String
+  message     String
+  category    String
+  status      SupportStatus @default(OPEN)
+  handledById String?
+  handledBy   String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorId     String
+  actor       User     @relation(fields: [actorId], references: [id])
+  action      String
+  entityType  String
+  entityId    String
+  metadata    Json?
+  createdAt   DateTime @default(now())
+}

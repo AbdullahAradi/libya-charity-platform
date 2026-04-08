@@ -1,17 +1,21 @@
-# mobile
+# Libya Charity Mobile App
 
-A new Flutter project.
+Production-ready frontend foundation for **ليبيا الخيرية** built with Flutter.
 
-## Getting Started
+## Stack
+- Flutter (Material 3)
+- Riverpod (state management)
+- GoRouter (navigation)
+- Mock repositories (no real backend yet)
 
-This project is a starting point for a Flutter application.
+## Structure
+- `lib/app`: app bootstrap + router.
+- `lib/core`: theme, constants, localization, reusable widgets.
+- `lib/data`: models, mock data, repository abstraction.
+- `lib/features`: vertical feature modules.
+- `lib/l10n`: localization generation placeholder.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Notes
+- Arabic is the default locale.
+- RTL-aware layouts are used by default.
+- TODO markers are placed where backend/payment/APIs will be integrated.
